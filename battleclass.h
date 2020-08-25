@@ -113,6 +113,18 @@
 
         ///FIN CLASE BARCO**************************************************************************
 
+        ///CLASE PLAYER+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        class player{
+          int vidas;
+                public:
+                    cuadricula grilla;
+
+                    int getVidas();     void setVidas(const int&);
+
+                    void disminuir_vidas();
+        };
+
 
 
 #endif // BATTLECLASS_H_INCLUDED

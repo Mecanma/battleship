@@ -13,53 +13,200 @@
         a = b;
         b = tmp;
         }
-
     }
 
 
 namespace battle{
 
-    void IA(cuadricula &B){
+    void IA(player &P){
         srand(time(NULL));
             static bool nuevo = true, impactado = false;
-            static int X, Y, cont;
+            static int X, Y, direccion;
             if(nuevo){
                 while(1){
                     X = (1 + rand() % (TAMANIO_CUADRICULA + 1 - 1)) - 1;
                     Y = (1 + rand() % (TAMANIO_CUADRICULA + 1 - 1)) - 1;
-                    if(B[Y][X].getFallado() || B[Y][X].getImpactado())
+                    if(P.grilla[Y][X].getFallado() || P.grilla[Y][X].getImpactado())
                         continue;
-                    disparar(B[Y][X]);
-                    if(B[Y][X].getImpactado())
+                    disparar(P.grilla[Y][X]);
+                    if(P.grilla[Y][X].getImpactado()){
                         nuevo = false;
+                        P.disminuir_vidas();
+                    }
                     break;
                 }
             }
             else{
-               /* if(!impactado){
-                   switch(cont){
-                    case 0:
-                        if(!dentro_area_juego() || B[Y + 1][X].getFallado() || B[Y + 1][X].getOcupado())
-
-                   }
-                }*/
-
+                if(!impactado){
+                    direccion = manecillas(P, X, Y, impactado);
+                }
+                else{
+                    seguir_direccion(P, X, Y, direccion, nuevo, impactado);
+                }
             }
+
+        }
+
+
+
+    int manecillas(player& P, int &X, int &Y, bool &impactado){
+
+         if(dentro_area_juego(X, Y, arriba) && !P.grilla[Y - 1][X].getFallado() && !P.grilla[Y - 1][X].getImpactado()){
+            disparar(P.grilla[Y - 1][X]);
+                if(P.grilla[Y - 1][X].getImpactado()){
+                    impactado = true;
+                    Y--;
+                    P.disminuir_vidas();
+                    return arriba;
+                }
+
+        }
+        else if(dentro_area_juego(X, Y, derecha) && !P.grilla[Y][X + 1].getFallado() && !P.grilla[Y][X + 1].getImpactado()){
+            disparar(P.grilla[Y][X + 1]);
+                if(P.grilla[Y][X + 1].getImpactado()){
+                    impactado = true;
+                    X++;
+                    P.disminuir_vidas();
+                    return derecha;
+                }
+
+        }
+        else if(dentro_area_juego(X, Y, abajo) && !P.grilla[Y + 1][X].getFallado() && !P.grilla[Y + 1][X].getImpactado()){
+            disparar(P.grilla[Y + 1][X]);
+                if(P.grilla[Y + 1][X].getImpactado()){
+                    impactado = true;
+                    Y++;
+                    P.disminuir_vidas();
+                    return abajo;
+                }
+
+        }
+        else if(dentro_area_juego(X, Y, izquierda) && !P.grilla[Y][X - 1].getFallado() && !P.grilla[Y][X - 1].getImpactado()){
+            disparar(P.grilla[Y][X - 1]);
+                if(P.grilla[Y][X - 1].getImpactado()){
+                    impactado = true;
+                    X--;
+                    P.disminuir_vidas();
+                    return izquierda;
+                }
+
+        }
+
+    }
+
+    void seguir_direccion(player &P, int &X, int &Y, int direccion, bool &nuevo, bool &impactado){
+
+        switch(direccion){
+            case arriba:
+                if(dentro_area_juego(X, Y, arriba) && !P.grilla[Y - 1][X].getFallado() && !P.grilla[Y - 1][X].getImpactado()){
+                    disparar(P.grilla[Y - 1][X]);
+                    if(P.grilla[Y - 1][X].getFallado()){
+                        nuevo = true;
+                        impactado = false;
+                        break;
+                    }
+                    P.disminuir_vidas();
+                    Y--;
+                }
+                else{
+                     nuevo = true;
+                    impactado = false;
+                }
+                break;
+            case derecha:
+                if(dentro_area_juego(X, Y, abajo) && !P.grilla[Y - 1][X].getFallado() && !P.grilla[Y - 1][X].getImpactado()){
+                    disparar(P.grilla[Y][X + 1]);
+                    if(P.grilla[Y][X + 1].getFallado()){
+                        nuevo = true;
+                        impactado = false;
+                        break;
+                    }
+                    P.disminuir_vidas();
+                    X++;
+                }
+                else{
+                     nuevo = true;
+                    impactado = false;
+                }
+                break;
+            case abajo:
+                if(dentro_area_juego(X, Y, abajo) && !P.grilla[Y + 1][X].getFallado() && !P.grilla[Y + 1][X].getImpactado()){
+                    disparar(P.grilla[Y + 1][X]);
+                    if(P.grilla[Y + 1][X].getFallado()){
+                        nuevo = true;
+                        impactado = false;
+                        break;
+                    }
+                    P.disminuir_vidas();
+                    Y++;
+                }
+                else{
+                     nuevo = true;
+                    impactado = false;
+                }
+                break;
+
+            case izquierda:
+                if(dentro_area_juego(X, Y, arriba) && !P.grilla[Y][X - 1].getFallado() && !P.grilla[Y][X - 1].getImpactado()){
+                    disparar(P.grilla[Y][X - 1]);
+                    if(P.grilla[Y][X - 1].getFallado()){
+                        nuevo = true;
+                        impactado = false;
+                        break;
+                    }
+                    P.disminuir_vidas();
+                    X--;
+                }
+                else{
+                     nuevo = true;
+                    impactado = false;
+                }
+                break;
+
+        }
+
+
     }
 
     void disparar(espacio &B){
         B.getOcupado() ? B.setImpactado(true) : B.setFallado(true);
     }
 
-    void colocar_barcos(cuadricula &B, bool automatico){
+    bool dentro_area_juego(int X, int Y, int direccion){
+
+        int direccionX = 0, direccionY = 0;
+
+            switch(direccion){
+                case arriba:
+                    direccionY = -1; break;
+                case izquierda:
+                    direccionX = -1; break;
+                case abajo:
+                    direccionY = 1; break;
+                case derecha:
+                    direccionX = 1; break;
+            }
+
+                      if(Y + direccionY > TAMANIO_CUADRICULA - 1 ||
+                        Y + direccionY < 0 ||
+                        X + direccionX < 0 ||
+                        X + direccionX > TAMANIO_CUADRICULA - 1)
+                            return false;
+
+            return true;
+    }
+
+
+    void colocar_barcos(player &P, bool automatico){
         srand(time(NULL));
         int flota[4] = {2, 3, 3, 4};
         barco *punt = NULL;
-        bool colocado;
+        bool colocado(false);
             if(automatico){
                     for(int i = 0; i < 4; i++){
+                        P.setVidas(P.getVidas() + flota[i]);
                         colocado = false;
-                        punt = new barco(B, flota[i]);
+                        punt = new barco(P.grilla, flota[i]);
                         while(!colocado){
                             punt->setX0((1 + rand() % (TAMANIO_CUADRICULA + 1 - 1)) - 1);
                             punt->setY0((1 + rand() % (TAMANIO_CUADRICULA + 1 - 1)) - 1);
@@ -79,11 +226,12 @@ namespace battle{
 
                 for(int i = 0; i < 4; i++){
                     colocado = false;
-                    punt = new barco(B, flota[i]);
+                    P.setVidas(P.getVidas() + flota[i]);
+                    punt = new barco(P.grilla, flota[i]);
                         while(!colocado){
                             pixeldraw::borrar();
-                            battle::dibujar_cuadricula(B, RGB(255, 255, 255));
-                            mostrar_barcos_colocados(B);
+                            battle::dibujar_cuadricula(P.grilla, RGB(255, 255, 255));
+                            mostrar_barcos_colocados(P.grilla);
                             punt->mover();
 
                             if(pixeldraw::keydown('X') && punt->getValido()){
@@ -111,14 +259,17 @@ namespace battle{
     }
 
 
-    void cuadricula_mouse_check(cuadricula &B, bool &turno){
+    void cuadricula_mouse_check(player &P, bool &turno){
         bool encontrado = false;
         for(int i = 0; i < TAMANIO_CUADRICULA; i++){
             for(int j = 0; j < TAMANIO_CUADRICULA; j++){
-                if(B[i][j].mouse_check()){
+                if(P.grilla[i][j].mouse_check()){
                     if(pixeldraw::izquierdo()){
-                        B[i][j].getOcupado() ? B[i][j].setImpactado(true) : B[i][j].setFallado(true);
+                        P.grilla[i][j].getOcupado() ? P.grilla[i][j].setImpactado(true) : P.grilla[i][j].setFallado(true);
                         turno = false;
+                        if(P.grilla[i][j].getImpactado())
+                            P.disminuir_vidas();
+                        Sleep(270);
                     }
                     encontrado = true;
                     break;

@@ -131,26 +131,10 @@
 
 
         bool barco::movimiento_valido(const int &type){
-            int direccionX(0), direccionY(0);
-
-            switch(type){
-                case arriba:
-                    direccionY = -1; break;
-                case izquierda:
-                    direccionX = -1; break;
-                case abajo:
-                    direccionY = 1; break;
-                case derecha:
-                    direccionX = 1; break;
+            for(int i = 0; i < extension_barco;i++){
+                if(!battle::dentro_area_juego(X[i], Y[i], type))
+                    return false;
             }
-
-                for(int i = 0; i < extension_barco; i++){
-                    if(Y[i] + direccionY > TAMANIO_CUADRICULA - 1 ||
-                        Y[i] + direccionY < 0 ||
-                        X[i] + direccionX < 0 ||
-                        X[i] + direccionX > TAMANIO_CUADRICULA - 1)
-                            return false;
-                }
             return true;
         }
 
@@ -163,23 +147,22 @@
                 orientacion == vertical ? orientacion = horizontal : orientacion = vertical;
                 pulsado = true;
             }
-
-            if(pixeldraw::keydown(VK_LEFT) && movimiento_valido(izquierda)){
+            else if(pixeldraw::keydown(VK_LEFT) && movimiento_valido(izquierda)){
                 X[0]--;
                 pulsado = true;
             }
 
-            if(pixeldraw::keydown(VK_RIGHT) && movimiento_valido(derecha)){
+            else if(pixeldraw::keydown(VK_RIGHT) && movimiento_valido(derecha)){
                 X[0]++;
                 pulsado = true;
             }
 
-            if(pixeldraw::keydown(VK_DOWN) && movimiento_valido(abajo)){
+            else if(pixeldraw::keydown(VK_DOWN) && movimiento_valido(abajo)){
                 Y[0]++;
                 pulsado = true;
             }
 
-            if(pixeldraw::keydown(VK_UP) && movimiento_valido(arriba)){
+            else if(pixeldraw::keydown(VK_UP) && movimiento_valido(arriba)){
                 Y[0]--;
                 pulsado = true;
             }
@@ -266,5 +249,15 @@
 
 
     ///FIN FUNCIONES CLASE BARCO********************************************************************
+
+
+    ///FUNCIONES CLASE PLAYER++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+        void player::disminuir_vidas(){this->vidas--;}
+
+        int player::getVidas(){return this->vidas;}
+        void player::setVidas(const int &num){this->vidas = num;}
+
+    ///FIN FUNCIONES CLASE PLAYER********************************************************************
 
 #endif // BATTLECLASS_CPP_INCLUDED

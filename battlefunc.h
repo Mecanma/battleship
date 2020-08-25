@@ -6,15 +6,21 @@
     #include "pixeldrawtxt.h"
 
     namespace battle{
-
-        void IA(cuadricula&);//pseudo inteligencia artificial
+        ///FUNCIONES IA
+        void IA(player&);//pseudo inteligencia artificial
         void disparar(espacio&);//solo para uso de la IA
+        int manecillas(player&, int&, int&, bool&);
+        void seguir_direccion(player&, int&, int&, int, bool&, bool&);
+        ///FIN FUNCIONES IA
 
-        void colocar_barcos(cuadricula&, bool = false);//coloca los barcos, segundo parametro manual/automatico
+        bool dentro_area_juego(int, int, int);
+
+
+        void colocar_barcos(player&, bool = false);//coloca los barcos, segundo parametro manual/automatico
         void mostrar_barcos_colocados(cuadricula&);//solo para la funcion de arriba en modo manual y muestra los
                                                     //barcos a medida que se van colocando
 
-        void cuadricula_mouse_check(cuadricula&, bool&);//revisa si el mouse está encima de un espacio de la cuadricula
+        void cuadricula_mouse_check(player&, bool&);//revisa si el mouse está encima de un espacio de la cuadricula
         void cuadricula_status_check(cuadricula&);//revisa el estado impacto/fallado de los espacios y pinta el
                                                 //simbolo correspondiente
 
